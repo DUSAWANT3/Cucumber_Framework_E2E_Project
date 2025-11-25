@@ -17,6 +17,9 @@ public class OfferPageStepDefinition {
     public String offerPageProductName;
     public String landingPageProductName;
     TestContextSetup testContextSetup;
+//Single Responsibility principle
+    //loosly coupled
+
 
     public OfferPageStepDefinition(TestContextSetup testContextSetup){
         this.testContextSetup =  testContextSetup ;
@@ -24,19 +27,25 @@ public class OfferPageStepDefinition {
 
     @Then("user searched for {string} shortname in offers page")
     public void user_searched_for_same_shortname_in_offers_page_to_check_if_product_exist(String shortName) throws InterruptedException {
-        testContextSetup.driver.findElement(By.linkText("Top Deals")).click();
-        Set<String> s1 = testContextSetup.driver.getWindowHandles();
-        Iterator<String> i1 =s1.iterator();
-        String parentWindow = i1.next();
-        String childWindow = i1.next();
-        testContextSetup.driver.switchTo().window(childWindow);
-
+        switchToOfferPage();
         testContextSetup.driver.findElement(By.xpath("//*[@id=\"search-field\"]")).sendKeys(shortName);
 
         Thread.sleep(2000);
         String offerPageProductName = testContextSetup.driver.findElement(By.cssSelector("tbody tr td:nth-child(1)")).getText();
         System.out.println(offerPageProductName + " is Extracted from offer page");
     }
+public void switchToOfferPage() {
+    //If switched to offer page -> skip below part of code
+    //if(testContextSetup.driver.getCurrentUrl().equalsIgnoreCase("https://rahulshettyacademy.com/seleniumPractise/#/offers"))
+
+        testContextSetup.driver.findElement(By.linkText("Top Deals")).click();
+        Set<String> s1 = testContextSetup.driver.getWindowHandles();
+        Iterator<String> i1 = s1.iterator();
+        String parentWindow = i1.next();
+        String childWindow = i1.next();
+        testContextSetup.driver.switchTo().window(childWindow);
+
+}
 
     @Then("validate product name in offers page matches  with Landing page")
     public void validate_product_name_in_offers_page_matches_with_Landing_page(){
